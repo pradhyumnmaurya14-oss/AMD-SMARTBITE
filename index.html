@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SmartBite — AI-powered nutrition assistant for smarter eating decisions.">
+  <title>SmartBite — Smart Nutrition Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍎</text></svg>">
+</head>
+<body>
+
+  <div class="ambient-bg" aria-hidden="true">
+    <canvas id="ambientCanvas"></canvas>
+    <span class="floater" style="top:15%;left:3%">🥑</span>
+    <span class="floater" style="top:60%;right:4%">🍊</span>
+    <span class="floater" style="bottom:20%;left:8%">🥦</span>
+  </div>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">🍎 <span>SmartBite</span></div>
+      <div class="streak-badge" id="streakBadge">🔥 <span id="streakCount">0</span> day streak</div>
+    </div>
+    <nav class="nav">
+      <button class="nav-btn active" data-view="analyze">🔍 Analyze</button>
+      <button class="nav-btn" data-view="dashboard">📊 Dashboard</button>
+      <button class="nav-btn" data-view="history">📋 History</button>
+    </nav>
+  </header>
+
+  <main class="container">
+
+    <!-- ═══════════ ANALYZE VIEW ═══════════ -->
+    <div class="view active" id="view-analyze">
+
+      <!-- Greeting -->
+      <div class="greeting">
+        <h1 id="greetingText">Good afternoon! 👋</h1>
+        <p id="greetingSubtext">What are you eating today?</p>
+      </div>
+
+      <!-- Search Hero -->
+      <div class="search-hero">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" id="searchInput" placeholder="Search any food (e.g. Avocado Toast, Oatmeal)..." autocomplete="off">
+          <div class="autocomplete" id="autocomplete"></div>
+        </div>
+        <div class="chips" id="quickChips"></div>
+      </div>
+
+      <!-- Context Bar -->
+      <div class="context-bar">
+        <div class="ctx-group">
+          <div class="ctx-label">Time of Day</div>
+          <div class="ctx-options" id="contextTime">
+            <button class="ctx-btn" data-value="morning">🌅 Morning</button>
+            <button class="ctx-btn" data-value="afternoon">☀️ Afternoon</button>
+            <button class="ctx-btn" data-value="night">🌙 Night</button>
+          </div>
+        </div>
+        <div class="ctx-group">
+          <div class="ctx-label">Your Goal</div>
+          <div class="ctx-options" id="contextGoal">
+            <button class="ctx-btn" data-value="weight-loss">🏃 Weight Loss</button>
+            <button class="ctx-btn" data-value="muscle-gain">💪 Muscle Gain</button>
+            <button class="ctx-btn" data-value="maintenance">⚖️ Balance</button>
+          </div>
+        </div>
+        <div class="ctx-group">
+          <div class="ctx-label">Mood</div>
+          <div class="ctx-options" id="contextMood">
+            <button class="ctx-btn" data-value="active">⚡ Active</button>
+            <button class="ctx-btn" data-value="lazy">😴 Resting</button>
+            <button class="ctx-btn" data-value="stressed">😰 Stressed</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result Panel -->
+      <div class="result-panel" id="resultPanel">
+        <div class="result-top">
+          <div class="result-food">
+            <span class="result-emoji" id="foodEmoji">🍽️</span>
+            <div>
+              <div class="result-name" id="foodName">Select a food</div>
+              <div class="result-cat" id="foodCategory">—</div>
+            </div>
+          </div>
+          <div class="score-ring" id="scoreRing">
+            <svg viewBox="0 0 80 80"><circle class="ring-bg" cx="40" cy="40" r="34"/><circle class="ring-fill" id="ringFill" cx="40" cy="40" r="34"/></svg>
+            <div class="score-inner">
+              <span class="score-num" id="scoreNum">0</span>
+              <span class="score-label">Score</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="macros">
+          <div class="macro cal"><span class="macro-val" id="mCal">0</span><span class="macro-lbl">Calories</span></div>
+          <div class="macro pro"><span class="macro-val" id="mPro">0g</span><span class="macro-lbl">Protein</span></div>
+          <div class="macro carb"><span class="macro-val" id="mCarb">0g</span><span class="macro-lbl">Carbs</span></div>
+          <div class="macro fat"><span class="macro-val" id="mFat">0g</span><span class="macro-lbl">Fats</span></div>
+        </div>
+
+        <div class="result-actions">
+          <button class="btn btn-primary" id="btnLog">✅ Log This Meal</button>
+          <button class="btn btn-outline" id="btnSwap">🔄 Quick Swap</button>
+        </div>
+      </div>
+
+      <!-- AI Suggestion Block -->
+      <div class="suggest-block" id="suggestBlock">
+        <div class="suggest-hero">
+          <div class="suggest-badge">💡 Smart Suggestion</div>
+          <div class="suggest-title" id="suggestTitle">Analyzing your profile...</div>
+          <div class="suggest-reason" id="suggestReason"></div>
+        </div>
+        <div class="suggest-cards" id="suggestCards"></div>
+      </div>
+
+    </div>
+
+    <!-- ═══════════ DASHBOARD VIEW ═══════════ -->
+    <div class="view" id="view-dashboard">
+      <div class="section-head">📊 Your Nutrition Dashboard</div>
+      <div class="dash-grid">
+        <div class="dash-card">
+          <div class="dash-title">Today's Macros</div>
+          <div class="dash-donut" id="dashDonut"></div>
+          <div class="dash-cal"><span id="dashCalTotal">0</span> kcal today</div>
+          <div class="dash-legend" id="dashLegend"></div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-title">Recent Meals</div>
+          <div class="dash-bars" id="dashBars"><div class="empty-msg">Log meals to see trends</div></div>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-box"><span class="stat-val" id="statAvg">—</span><span class="stat-lbl">Avg Health Score</span></div>
+        <div class="stat-box"><span class="stat-val" id="statMeals">0</span><span class="stat-lbl">Meals Logged</span></div>
+        <div class="stat-box"><span class="stat-val" id="statStreak">0</span><span class="stat-lbl">Best Streak</span></div>
+      </div>
+    </div>
+
+    <!-- ═══════════ HISTORY VIEW ═══════════ -->
+    <div class="view" id="view-history">
+      <div class="section-head">📋 Meal History</div>
+      <div class="history-list" id="historyList"><div class="empty-msg">No meals logged yet. Start analyzing!</div></div>
+
+      <div class="section-head" style="margin-top:30px">🧠 Pattern Insights</div>
+      <div id="insightsGrid"><div class="empty-msg">Log a few meals to unlock insights.</div></div>
+      <div class="tip-box">
+        <span>💡</span>
+        <span id="tipText">Stay hydrated — water boosts metabolism and helps with portion control.</span>
+      </div>
+    </div>
+
+    <footer class="footer">SmartBite v3 — Smart Nutrition, Made Simple</footer>
+  </main>
+
+  <div class="toast" id="toast"></div>
+  <script src="script.js"></script>
+</body>
+</html>
