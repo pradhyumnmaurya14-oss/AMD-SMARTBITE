@@ -87,6 +87,18 @@ SmartBite uses a **Rule-Based Intelligence Engine** to provide context-aware gui
    - **VS Code**: Use the "Live Server" extension.
    - **Terminal**: Run `npx serve .` or `python -m http.server 3000`.
 
+### 🐳 Running with Docker
+
+1. Build the image:
+   ```bash
+   docker build -t smartbite .
+   ```
+2. Run the container:
+   ```bash
+   docker run -d -p 8080:80 smartbite
+   ```
+3. Access the app at `http://localhost:8080`.
+
 ---
 
 ## 📝 Assumptions & Edge-Case Handling
